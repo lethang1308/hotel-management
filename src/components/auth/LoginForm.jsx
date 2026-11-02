@@ -18,6 +18,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const schema = z.object({
   email: z.string().trim().email("Enter a valid email address").max(255),
@@ -25,6 +26,7 @@ const schema = z.object({
 });
 
 export function LoginForm() {
+  const { t } = useLanguage();
   const [showPw, setShowPw] = useState(false);
   const [asManager, setAsManager] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
@@ -86,23 +88,17 @@ export function LoginForm() {
   return (
     <div className="w-full max-w-[420px]">
       <h1 className="font-display text-[clamp(1.8rem,3vw,2.4rem)] font-light leading-[1.05] tracking-[-0.02em] text-primary">
-        {asManager ? "Sign in as a host" : "Login to StayNest"}
+        {asManager ? t("auth.loginHostTitle") : t("auth.loginTitle")}
       </h1>
       <p className="mt-2 text-[13.5px] text-muted-foreground">
-        {asManager
-          ? "Manage your listings, bookings and guests."
-          : "Enter your details to access your account"}
+        {asManager ? t("auth.loginHostSubtitle") : t("auth.loginSubtitle")}
       </p>
 
       <div className="mt-4">
         <RoleToggle
           asManager={asManager}
           onChange={setAsManager}
-          hint={
-            asManager
-              ? "We'll verify your account has hotel manager access."
-              : "Standard guest sign-in for booking stays."
-          }
+          hint={asManager ? t("auth.hostToggleHint") : t("auth.guestToggleHint")}
         />
       </div>
 
@@ -116,7 +112,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-3" noValidate>
         <div>
           <label htmlFor="email" className="sr-only">
-            Email address
+            {t("auth.emailPlaceholder")}
           </label>
           <div className={shellBase}>
             <Mail
@@ -127,7 +123,7 @@ export function LoginForm() {
               id="email"
               type="email"
               autoComplete="email"
-              placeholder="Email address"
+              placeholder={t("auth.emailPlaceholder")}
               aria-invalid={!!errors.email}
               className={inputBase}
               {...register("email")}
@@ -140,7 +136,7 @@ export function LoginForm() {
 
         <div>
           <label htmlFor="password" className="sr-only">
-            Password
+            {t("auth.passwordPlaceholder")}
           </label>
           <div className={shellBase}>
             <Lock
@@ -151,7 +147,7 @@ export function LoginForm() {
               id="password"
               type={showPw ? "text" : "password"}
               autoComplete="current-password"
-              placeholder="Password"
+              placeholder={t("auth.passwordPlaceholder")}
               aria-invalid={!!errors.password}
               className={`${inputBase} pr-11`}
               {...register("password")}
@@ -173,7 +169,7 @@ export function LoginForm() {
               to="/forgot-password"
               className="text-[12.5px] font-medium text-ink/80 transition-colors hover:text-primary hover:underline underline-offset-4"
             >
-              Forgot password?
+              {t("auth.forgotPassword")}
             </Link>
           </div>
         </div>
@@ -186,19 +182,19 @@ export function LoginForm() {
           {isPending ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              Signing in…
+              {t("auth.signingIn")}
             </>
           ) : asManager ? (
-            "Sign in as host"
+            t("auth.loginHostBtn")
           ) : (
-            "Login"
+            t("auth.loginBtn")
           )}
         </button>
 
         <div className="flex items-center gap-4 pt-1">
           <span className="h-px flex-1 bg-border" />
           <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-            or
+            {t("common.or")}
           </span>
           <span className="h-px flex-1 bg-border" />
         </div>
@@ -208,20 +204,20 @@ export function LoginForm() {
             icon={<GoogleIcon />}
             onClick={() => toast.info("Google sign-in isn't configured yet.")}
           >
-            Continue with Google
+            {t("auth.googleLogin")}
           </SocialButton>
           <SocialButton
             icon={<AppleIcon />}
             onClick={() => toast.info("Apple sign-in isn't configured yet.")}
           >
-            Continue with Apple
+            {t("auth.appleLogin")}
           </SocialButton>
         </div>
       </form>
 
       <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-muted-foreground">
         <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
-        Your data is secure with us.
+        {t("auth.secureNote")}
       </div>
 
       <AlertDialog open={gateOpen} onOpenChange={setGateOpen}>
@@ -231,12 +227,10 @@ export function LoginForm() {
               <Building2 className="h-6 w-6" aria-hidden />
             </div>
             <AlertDialogTitle className="text-center font-display text-[22px] font-light tracking-[-0.01em] text-primary">
-              Hotel manager access required
+              {t("auth.hostAccessTitle")}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center text-[13.5px] leading-relaxed text-muted-foreground">
-              Thank you for your interest in hosting with StayNest. Your account
-              isn't registered as a hotel manager yet. Please reach out to us on
-              our social channels and our team will help you get set up.
+              {t("auth.hostAccessDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:justify-center">
@@ -244,7 +238,7 @@ export function LoginForm() {
               onClick={() => setGateOpen(false)}
               className="h-[46px] rounded-[12px] bg-primary px-6 text-[13.5px] font-semibold text-primary-foreground hover:bg-primary-mid"
             >
-              Got it
+              {t("auth.gotIt")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -252,3 +246,5 @@ export function LoginForm() {
     </div>
   );
 }
+
+export default LoginForm;

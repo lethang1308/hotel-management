@@ -1,19 +1,22 @@
 import { Link } from "react-router-dom";
-import { Globe } from "lucide-react";
 import logoMark from "@/assets/logo-mark.png";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 import { UserMenu } from "./UserMenu";
-
-const NAV_ITEMS = [
-  { label: "Stays", to: "/search" },
-  { label: "Destinations", to: "/search" },
-  { label: "Offers", to: "/search?sort=price_asc" },
-  { label: "Concierge", to: "/#concierge" },
-  { label: "Saved", to: "/wishlist" },
-];
+import { LanguageSelector } from "@/components/common/LanguageSelector";
 
 export function Nav() {
   const { isAuthenticated } = useAuth();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { label: t("nav.stays"), to: "/search" },
+    { label: t("nav.destinations"), to: "/search" },
+    { label: t("nav.offers"), to: "/search?sort=price_asc" },
+    { label: t("nav.concierge"), to: "/#concierge" },
+    { label: t("nav.saved"), to: "/wishlist" },
+  ];
+
   return (
     <header className="absolute inset-x-0 top-0 z-30">
       <div
@@ -33,7 +36,7 @@ export function Nav() {
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-10 lg:flex">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.label}
               to={item.to}
@@ -44,14 +47,10 @@ export function Nav() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4 md:gap-6">
-          <button
-            type="button"
-            className="hidden items-center gap-1.5 text-sm font-medium text-ink/80 transition-colors hover:text-primary md:flex"
-          >
-            <Globe className="h-4 w-4" aria-hidden />
-            EN
-          </button>
+        <div className="flex items-center gap-3 md:gap-5">
+          {/* Language Switcher (EN / VI) */}
+          <LanguageSelector />
+
           {isAuthenticated ? (
             <UserMenu />
           ) : (
@@ -60,13 +59,13 @@ export function Nav() {
                 to="/login"
                 className="hidden text-sm font-medium text-ink/85 transition-colors hover:text-primary md:inline-flex"
               >
-                Sign in
+                {t("nav.signIn")}
               </Link>
               <Link
                 to="/signup"
                 className="inline-flex items-center rounded-2xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary-mid"
               >
-                Sign up
+                {t("nav.signUp")}
               </Link>
             </>
           )}
@@ -75,3 +74,5 @@ export function Nav() {
     </header>
   );
 }
+
+export default Nav;

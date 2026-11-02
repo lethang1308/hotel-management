@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
 
 function initialsOf(session) {
   const source = session?.name?.trim() || session?.email?.trim() || "";
@@ -32,16 +33,17 @@ function initialsOf(session) {
 
 export function UserMenu() {
   const { session, signOut } = useAuth();
+  const { t } = useLanguage();
   const isManager =
     !!session?.roles?.includes("HOTEL_MANAGER") ||
     !!session?.roles?.includes("ADMIN");
   const navigate = useNavigate();
-  const label = session?.name || session?.email?.split("@")[0] || "Account";
+  const label = session?.name || session?.email?.split("@")[0] || t("nav.account");
   const initials = initialsOf(session);
 
   const handleSignOut = () => {
     signOut();
-    toast.success("Signed out. See you soon.");
+    toast.success(t("nav.signOut"));
     navigate("/");
   };
 
@@ -68,7 +70,7 @@ export function UserMenu() {
       >
         <DropdownMenuLabel className="px-3 py-2">
           <div className="font-display text-[15px] font-medium leading-tight text-primary">
-            {session?.name || "Welcome back"}
+            {session?.name || t("nav.welcomeBack")}
           </div>
           {session?.email && (
             <div className="mt-0.5 truncate text-[12px] font-normal text-muted-foreground">
@@ -84,7 +86,7 @@ export function UserMenu() {
         >
           <Link to="/dashboard">
             <LayoutDashboard className="mr-2.5 h-4 w-4" />
-            Dashboard
+            {t("nav.dashboard")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -93,7 +95,7 @@ export function UserMenu() {
         >
           <Link to="/bookings">
             <CalendarCheck className="mr-2.5 h-4 w-4" />
-            My Bookings
+            {t("nav.myBookings")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -102,7 +104,7 @@ export function UserMenu() {
         >
           <Link to="/wishlist">
             <Heart className="mr-2.5 h-4 w-4" />
-            Saved Stays
+            {t("nav.savedStays")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -111,7 +113,7 @@ export function UserMenu() {
         >
           <Link to="/guests">
             <Users className="mr-2.5 h-4 w-4" />
-            Saved Travelers
+            {t("nav.savedTravelers")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -120,7 +122,7 @@ export function UserMenu() {
         >
           <Link to="/profile">
             <User className="mr-2.5 h-4 w-4" />
-            Profile
+            {t("nav.profile")}
           </Link>
         </DropdownMenuItem>
 
@@ -131,7 +133,7 @@ export function UserMenu() {
           >
             <Link to="/manage/hotels">
               <Building2 className="mr-2.5 h-4 w-4" />
-              Manager Console
+              {t("nav.managerConsole")}
             </Link>
           </DropdownMenuItem>
         )}
@@ -142,7 +144,7 @@ export function UserMenu() {
         >
           <Link to="/manage/settings">
             <Settings className="mr-2.5 h-4 w-4" />
-            Account Settings
+            {t("nav.accountSettings")}
           </Link>
         </DropdownMenuItem>
 
@@ -152,9 +154,11 @@ export function UserMenu() {
           className="cursor-pointer rounded-lg px-3 py-2 text-[13.5px] text-destructive focus:bg-destructive/10 focus:text-destructive"
         >
           <LogOut className="mr-2.5 h-4 w-4" />
-          Sign out
+          {t("nav.signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
+
+export default UserMenu;

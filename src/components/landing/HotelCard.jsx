@@ -5,12 +5,7 @@ import { toast } from "sonner";
 import { useImageRotation } from "@/hooks/useImageRotation";
 import { useInViewport } from "@/hooks/useInViewport";
 import { useToggleWishlist, useWishlistIds } from "@/hooks/queries/useWishlist";
-
-const currency = new Intl.NumberFormat("en-IN", {
-  style: "currency",
-  currency: "INR",
-  maximumFractionDigits: 0,
-});
+import { useLanguage } from "@/hooks/useLanguage";
 
 const FALLBACK_HOTEL_PHOTOS = [
   "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=80&fit=crop",
@@ -21,6 +16,7 @@ const FALLBACK_HOTEL_PHOTOS = [
 ];
 
 export function HotelCard({ hotel }) {
+  const { t, isVi } = useLanguage();
   const [hovered, setHovered] = useState(false);
   const [loaded, setLoaded] = useState({});
   const cardRef = useRef(null);
@@ -47,6 +43,14 @@ export function HotelCard({ hotel }) {
   const targetUrl = `/hotels/${hotel.id}?checkIn=${checkIn}&checkOut=${checkOut}&rooms=1`;
 
   const safePrice = Number.isFinite(Number(hotel.price)) && Number(hotel.price) > 0 ? Number(hotel.price) : 3550;
+
+  const displayPrice = isVi
+    ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+        safePrice < 100000 ? safePrice * 1000 : safePrice
+      )
+    : new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(
+        safePrice
+      );
 
   return (
     <Link
@@ -105,9 +109,11 @@ export function HotelCard({ hotel }) {
           </p>
         </div>
         <div className="text-right">
-          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">From</div>
-          <div className="text-[17px] font-semibold text-ink">{currency.format(safePrice)}</div>
-          <div className="text-[11px] text-muted-foreground">/night</div>
+          <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
+            {t("curatedStays.from")}
+          </div>
+          <div className="text-[17px] font-semibold text-ink">{displayPrice}</div>
+          <div className="text-[11px] text-muted-foreground">{t("curatedStays.perNight")}</div>
         </div>
       </div>
 
@@ -123,7 +129,7 @@ export function HotelCard({ hotel }) {
         aria-hidden
         className="pointer-events-none mt-3 px-1 text-[13px] font-medium text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       >
-        View stay →
+        {t("curatedStays.viewStay")}
       </div>
 
       <button
@@ -148,3 +154,5 @@ export function HotelCard({ hotel }) {
     </Link>
   );
 }
+
+export default HotelCard;

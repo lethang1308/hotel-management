@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DestinationField } from "./search/DestinationField";
 import { DateField } from "./search/DateField";
 import { GuestsField } from "./search/GuestsField";
+import { useLanguage } from "@/hooks/useLanguage";
 
 function toIsoDate(d) {
   const y = d.getFullYear();
@@ -14,6 +15,7 @@ function toIsoDate(d) {
 
 export function SearchBar() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [destination, setDestination] = useState("");
   const [checkIn, setCheckIn] = useState();
   const [checkOut, setCheckOut] = useState();
@@ -48,8 +50,8 @@ export function SearchBar() {
     >
       <div className="flex flex-col divide-y divide-border md:flex-row md:items-stretch md:divide-x md:divide-y-0">
         <DestinationField value={destination} onChange={setDestination} />
-        <DateField label="Check in" value={checkIn} onChange={handleCheckIn} />
-        <DateField label="Check out" value={checkOut} onChange={setCheckOut} minDate={minCheckOut} />
+        <DateField label={t("searchBar.checkIn")} value={checkIn} onChange={handleCheckIn} />
+        <DateField label={t("searchBar.checkOut")} value={checkOut} onChange={setCheckOut} minDate={minCheckOut} />
         <GuestsField value={guests} onChange={setGuests} />
 
         <div className="flex items-center p-2">
@@ -58,10 +60,12 @@ export function SearchBar() {
             className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-7 text-sm font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary-mid md:h-14 md:w-auto"
           >
             <Search className="h-4 w-4" aria-hidden />
-            Search
+            {t("searchBar.searchBtn")}
           </button>
         </div>
       </div>
     </form>
   );
 }
+
+export default SearchBar;

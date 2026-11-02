@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import logoMark from "@/assets/logo-mark.png";
+import { useLanguage } from "@/hooks/useLanguage";
+import { LanguageSelector } from "@/components/common/LanguageSelector";
 
 function GithubIcon(props) {
   return (
@@ -31,15 +33,6 @@ function InstagramIcon(props) {
   );
 }
 
-const EXPLORE_LINKS = [
-  { label: "Stays", to: "/search" },
-  { label: "Destinations", to: "/search" },
-  { label: "Offers", to: "/search?sort=price_asc" },
-  { label: "Concierge", to: "/#concierge" },
-  { label: "Saved Stays", to: "/wishlist" },
-  { label: "Manager Console", to: "/manage/hotels" },
-];
-
 const SOCIALS = [
   { label: "GitHub", href: "https://github.com", icon: GithubIcon },
   { label: "LinkedIn", href: "https://www.linkedin.com", icon: LinkedinIcon },
@@ -48,6 +41,17 @@ const SOCIALS = [
 ];
 
 export function Footer() {
+  const { t } = useLanguage();
+
+  const exploreLinks = [
+    { label: t("nav.stays"), to: "/search" },
+    { label: t("nav.destinations"), to: "/search" },
+    { label: t("nav.offers"), to: "/search?sort=price_asc" },
+    { label: t("nav.concierge"), to: "/#concierge" },
+    { label: t("nav.savedStays"), to: "/wishlist" },
+    { label: t("nav.managerConsole"), to: "/manage/hotels" },
+  ];
+
   return (
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-[1440px] px-6 py-16 md:px-10 md:py-20">
@@ -58,17 +62,20 @@ export function Footer() {
               <span className="font-display text-2xl text-primary">StayNest</span>
             </Link>
             <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-muted-foreground">
-              A quiet collection of boutique hotels for travelers who value
-              stillness, craft, and unhurried moments.
+              {t("footer.slogan")}
             </p>
+            <div className="mt-6 flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">{t("common.language")}:</span>
+              <LanguageSelector />
+            </div>
           </div>
 
           <div>
             <div className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink">
-              Explore
+              {t("footer.explore")}
             </div>
             <ul className="mt-5 grid grid-cols-2 gap-y-2.5 gap-x-6 text-[14px] text-muted-foreground">
-              {EXPLORE_LINKS.map((item) => (
+              {exploreLinks.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.to}
@@ -83,7 +90,7 @@ export function Footer() {
 
           <div>
             <div className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink">
-              Follow Us
+              {t("footer.followUs")}
             </div>
             <div className="mt-5 flex items-center gap-3">
               {SOCIALS.map(({ label, href, icon: Icon }) => (
@@ -103,10 +110,11 @@ export function Footer() {
         </div>
 
         <div className="mt-14 border-t border-border pt-6 text-center text-[13px] text-muted-foreground">
-          © {new Date().getFullYear()} StayNest Hotel Management. All rights reserved. Crafted with{" "}
-          <span aria-label="love" className="text-accent">♥</span> for thoughtful hospitality.
+          © {new Date().getFullYear()} StayNest Hotel Management. {t("footer.rights")}
         </div>
       </div>
     </footer>
   );
 }
+
+export default Footer;

@@ -9,6 +9,7 @@ import { register as registerUser, login as loginUser, persistSession } from "@/
 import { ApiError } from "@/lib/api/client";
 import { GoogleIcon, SocialButton } from "./SocialButton";
 import { RoleToggle } from "./RoleToggle";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const schema = z
   .object({
@@ -26,6 +27,7 @@ const schema = z
   });
 
 export function SignUpForm() {
+  const { t } = useLanguage();
   const [showPw, setShowPw] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [asManager, setAsManager] = useState(false);
@@ -61,7 +63,7 @@ export function SignUpForm() {
         email: loginRes.email ?? v.email.trim(),
         name: loginRes.name ?? v.name.trim(),
       });
-      toast.success("Welcome to StayNest");
+      toast.success(asManager ? "Welcome, host" : "Welcome to StayNest");
       const returnUrl = sessionStorage.getItem("staynest.return_url");
       sessionStorage.removeItem("staynest.return_url");
       if (returnUrl && !returnUrl.includes("/auth") && !returnUrl.includes("/signup")) {
@@ -91,111 +93,164 @@ export function SignUpForm() {
   return (
     <div className="w-full max-w-[440px]">
       <h1 className="font-display text-[clamp(1.8rem,3vw,2.4rem)] font-light leading-[1.05] tracking-[-0.02em] text-primary">
-        {asManager ? "Create your host account" : "Create your account"}
+        {asManager ? t("auth.signupHostTitle") : t("auth.signupTitle")}
       </h1>
       <p className="mt-2 text-[13.5px] text-muted-foreground">
-        {asManager
-          ? "List your property on StayNest and reach travelers worldwide."
-          : "Join StayNest and make every stay memorable."}
+        {asManager ? t("auth.signupHostSubtitle") : t("auth.signupSubtitle")}
       </p>
 
       <div className="mt-4">
         <RoleToggle
           asManager={asManager}
           onChange={setAsManager}
-          hint={
-            asManager
-              ? "You'll be able to list and manage properties once verified."
-              : "Book stays, save favorites, and manage your trips."
-          }
+          hint={asManager ? t("auth.hostToggleHint") : t("auth.guestToggleHint")}
         />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-3" noValidate>
         <div>
-          <label htmlFor="name" className="sr-only">Full name</label>
+          <label htmlFor="name" className="sr-only">
+            {t("auth.fullNamePlaceholder")}
+          </label>
           <div className={shellBase}>
-            <User className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden/>
-            <input id="name" type="text" autoComplete="name" placeholder="Full name" aria-invalid={!!errors.name} className={inputBase} {...register("name")}/>
+            <User className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden />
+            <input
+              id="name"
+              type="text"
+              autoComplete="name"
+              placeholder={t("auth.fullNamePlaceholder")}
+              aria-invalid={!!errors.name}
+              className={inputBase}
+              {...register("name")}
+            />
           </div>
           {errors.name && <p className="mt-1 text-[12px] text-destructive">{errors.name.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="email" className="sr-only">Email address</label>
+          <label htmlFor="email" className="sr-only">
+            {t("auth.emailPlaceholder")}
+          </label>
           <div className={shellBase}>
-            <Mail className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden/>
-            <input id="email" type="email" autoComplete="email" placeholder="Email address" aria-invalid={!!errors.email} className={inputBase} {...register("email")}/>
+            <Mail className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden />
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              placeholder={t("auth.emailPlaceholder")}
+              aria-invalid={!!errors.email}
+              className={inputBase}
+              {...register("email")}
+            />
           </div>
           {errors.email && <p className="mt-1 text-[12px] text-destructive">{errors.email.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="password" className="sr-only">Password</label>
+          <label htmlFor="password" className="sr-only">
+            {t("auth.passwordPlaceholder")}
+          </label>
           <div className={shellBase}>
-            <Lock className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden/>
-            <input id="password" type={showPw ? "text" : "password"} autoComplete="new-password" placeholder="Password" aria-invalid={!!errors.password} className={`${inputBase} pr-11`} {...register("password")}/>
-            <button type="button" onClick={() => setShowPw((s) => !s)} aria-label={showPw ? "Hide password" : "Show password"} className="absolute right-3 grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:text-primary">
-              {showPw ? <EyeOff className="h-[17px] w-[17px]"/> : <Eye className="h-[17px] w-[17px]"/>}
+            <Lock className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden />
+            <input
+              id="password"
+              type={showPw ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder={t("auth.passwordPlaceholder")}
+              aria-invalid={!!errors.password}
+              className={`${inputBase} pr-11`}
+              {...register("password")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPw((s) => !s)}
+              aria-label={showPw ? "Hide password" : "Show password"}
+              className="absolute right-3 grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:text-primary"
+            >
+              {showPw ? <EyeOff className="h-[17px] w-[17px]" /> : <Eye className="h-[17px] w-[17px]" />}
             </button>
           </div>
           {errors.password && <p className="mt-1 text-[12px] text-destructive">{errors.password.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="sr-only">Confirm password</label>
+          <label htmlFor="confirmPassword" className="sr-only">
+            {t("auth.confirmPasswordPlaceholder")}
+          </label>
           <div className={shellBase}>
-            <Lock className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden/>
-            <input id="confirmPassword" type={showConfirm ? "text" : "password"} autoComplete="new-password" placeholder="Confirm password" aria-invalid={!!errors.confirmPassword} className={`${inputBase} pr-11`} {...register("confirmPassword")}/>
-            <button type="button" onClick={() => setShowConfirm((s) => !s)} aria-label={showConfirm ? "Hide password" : "Show password"} className="absolute right-3 grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:text-primary">
-              {showConfirm ? <EyeOff className="h-[17px] w-[17px]"/> : <Eye className="h-[17px] w-[17px]"/>}
+            <Lock className="absolute left-4 h-[17px] w-[17px] text-muted-foreground/80 transition-colors group-focus-within:text-primary" aria-hidden />
+            <input
+              id="confirmPassword"
+              type={showConfirm ? "text" : "password"}
+              autoComplete="new-password"
+              placeholder={t("auth.confirmPasswordPlaceholder")}
+              aria-invalid={!!errors.confirmPassword}
+              className={`${inputBase} pr-11`}
+              {...register("confirmPassword")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm((s) => !s)}
+              aria-label={showConfirm ? "Hide password" : "Show password"}
+              className="absolute right-3 grid h-8 w-8 place-items-center rounded-full text-muted-foreground transition-colors hover:text-primary"
+            >
+              {showConfirm ? <EyeOff className="h-[17px] w-[17px]" /> : <Eye className="h-[17px] w-[17px]" />}
             </button>
           </div>
-          {errors.confirmPassword && (<p className="mt-1 text-[12px] text-destructive">{errors.confirmPassword.message}</p>)}
+          {errors.confirmPassword && (
+            <p className="mt-1 text-[12px] text-destructive">{errors.confirmPassword.message}</p>
+          )}
         </div>
 
         <label className="flex items-start gap-2.5 pt-1 text-[12.5px] text-ink/85">
-          <input type="checkbox" className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary" {...register("agree")}/>
-          <span>
-            I agree to the{" "}
-            <a href="#" className="font-medium text-primary underline underline-offset-4 hover:text-primary-mid">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="font-medium text-primary underline underline-offset-4 hover:text-primary-mid">
-              Privacy Policy
-            </a>
-            .
-          </span>
+          <input
+            type="checkbox"
+            className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+            {...register("agree")}
+          />
+          <span>{t("auth.agreeTerms")}</span>
         </label>
-        {errors.agree && !agree && (<p className="text-[12px] text-destructive">{errors.agree.message}</p>)}
+        {errors.agree && !agree && (
+          <p className="text-[12px] text-destructive">{errors.agree.message}</p>
+        )}
 
-        <button type="submit" disabled={isPending || !isValid} className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-[14px] bg-primary text-[14px] font-semibold text-primary-foreground transition-all duration-200 hover:-translate-y-[2px] hover:bg-primary-mid disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0">
+        <button
+          type="submit"
+          disabled={isPending || !isValid}
+          className="inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-[14px] bg-primary text-[14px] font-semibold text-primary-foreground transition-all duration-200 hover:-translate-y-[2px] hover:bg-primary-mid disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+        >
           {isPending ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden/>
-              Creating account…
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+              {t("auth.creatingAccount")}
             </>
           ) : (
-            "Sign up"
+            t("auth.signupBtn")
           )}
         </button>
 
         <div className="flex items-center gap-4 pt-1">
-          <span className="h-px flex-1 bg-border"/>
-          <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">or</span>
-          <span className="h-px flex-1 bg-border"/>
+          <span className="h-px flex-1 bg-border" />
+          <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+            {t("common.or")}
+          </span>
+          <span className="h-px flex-1 bg-border" />
         </div>
 
-        <SocialButton icon={<GoogleIcon />} onClick={() => toast.info("Google sign-up isn't configured yet.")}>
-          Continue with Google
+        <SocialButton
+          icon={<GoogleIcon />}
+          onClick={() => toast.info("Google sign-up isn't configured yet.")}
+        >
+          {t("auth.googleLogin")}
         </SocialButton>
       </form>
 
       <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-muted-foreground">
-        <ShieldCheck className="h-3.5 w-3.5" aria-hidden/>
-        Your data is safe with us. We never share your information.
+        <ShieldCheck className="h-3.5 w-3.5" aria-hidden />
+        {t("auth.secureNote")}
       </div>
     </div>
   );
 }
+
+export default SignUpForm;

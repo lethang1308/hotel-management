@@ -3,9 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { SearchBar } from "./SearchBar";
 import { ConversationalSearchBox } from "@/components/search/ConversationalSearchBox";
 import heroAsset from "@/assets/hero.png";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export function Hero() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+
   const handleNL = (query) => {
     navigate(`/search?q=${encodeURIComponent(query)}`);
   };
@@ -37,16 +40,16 @@ export function Hero() {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl"
         >
-          <p className="eyebrow">Welcome to StayNest</p>
+          <p className="eyebrow">{t("hero.eyebrow")}</p>
           <h1 className="font-display mt-5 text-[clamp(2.6rem,6vw,5rem)] font-light leading-[1.02] tracking-[-0.02em] text-ink">
-            Find your nest.
+            {t("hero.titleLine1")}
             <br />
-            Make it memorable.
+            {t("hero.titleLine2")}
           </h1>
           <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink/80">
-            Curated stays for the modern traveler.
+            {t("hero.descLine1")}
             <br />
-            Peaceful getaways. Meaningful experiences.
+            {t("hero.descLine2")}
           </p>
         </motion.div>
 
@@ -57,9 +60,15 @@ export function Hero() {
           className="mt-10 w-full max-w-5xl space-y-4"
         >
           <SearchBar />
-          <ConversationalSearchBox compact onSubmit={handleNL} />
+          <ConversationalSearchBox
+            compact
+            placeholder={t("hero.askPlaceholder")}
+            onSubmit={handleNL}
+          />
         </motion.div>
       </div>
     </section>
   );
 }
+
+export default Hero;
